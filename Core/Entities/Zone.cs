@@ -1,5 +1,5 @@
 ﻿using Concertible.Core.Entities;
-using Concertible.Entities;
+using Core.Enums;
 
 namespace Concertible.Entities
 {

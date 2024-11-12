@@ -1,4 +1,4 @@
-﻿namespace Concertible.Entities
+﻿namespace Core.Enums
 {
     public enum ZoneType
     {
