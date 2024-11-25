@@ -1,6 +1,6 @@
 ﻿using Concertible.Core.Entities;
 using Concertible.Core.Interfaces;
-using Concertible.Data;
+using Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,35 +10,40 @@ using System.Threading.Tasks;
 
 namespace Concertible.Infrastructure.Repositories
 {
-    public class Repository<T>(ApplicationDbContext context) : IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly DbSet<T> dbSet = context.Set<T>();
+        protected readonly ApplicationDbContext context;
+
+        public Repository(ApplicationDbContext context)
+        {
+            this.context = context;
+        }
 
         public void Add(T entity)
         {
-            dbSet.Add(entity);
+            context.Set<T>().Add(entity);
         }
 
-        public bool Exists(int id) => dbSet.Any(e => e.Id == id);
+        public bool Exists(int id) => context.Set<T>().Any(e => e.Id == id);
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await dbSet.ToListAsync();
+            return await context.Set<T>().ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await context.Set<T>().FindAsync(id);
         }
 
         public void Remove(T entity)
         {
-            dbSet.Remove(entity);
+            context.Set<T>().Remove(entity);
         }   
 
         public void Update(T entity)
         {
-            dbSet.Update(entity);
+            context.Set<T>().Update(entity);
         }
     }
 

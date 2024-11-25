@@ -7,34 +7,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace Core.Entities.Identity
 {
-    public class ApplicationUser : IdentityUser<int> { }
+    public class ApplicationUser : IdentityUser<int> 
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
 
     public class Customer : ApplicationUser
     {
         public ICollection<Ticket> Tickets { get; set; }
     }
 
-    public class VenueOwner : ApplicationUser
+    public class VenueManager : ApplicationUser
     {
         public ICollection<Venue> Venues { get; }
     }
 
-    public class ArtistPartner : ApplicationUser
+    public class ArtistManager : ApplicationUser
     {
-        public Artist? Artist { get; set; }
+        public ICollection<Artist> Artists { get; set; }
     }
 
-    public class TaxiPartner : ApplicationUser
+    public class TaxiManager : ApplicationUser
     {
         public ICollection<TaxiCompany> TaxiComapnies { get; }
     }
 
-    public class HotelPartner : ApplicationUser 
+    public class HotelManager : ApplicationUser
     {
         public ICollection<Hotel> Hotels { get; }
     }
 
-    public class ApplicationRole : IdentityRole<int> { }
+    public class ApplicationRole : IdentityRole<int>
+    {
+    }
 }

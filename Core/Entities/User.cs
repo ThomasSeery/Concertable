@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concertible.Core.Interfaces
+namespace Core.Entities
 {
-    public interface IUserService
+    internal class User
     {
-        
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -32,6 +34,8 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -594,44 +598,23 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.Sql(@"
-                CREATE TRIGGER [DeleteLeasesOnArtistDelete]
-                ON [Artists]
-                AFTER DELETE
-                AS
-                BEGIN
-                    DELETE FROM [Lease]
-                    WHERE [ArtistId] IN (SELECT [Id] FROM deleted);
-                END;
-            ");
-
-            migrationBuilder.Sql(@"
-                CREATE TRIGGER [DeleteTicketsOnUserDelete]
-                ON [AspNetUsers]
-                AFTER DELETE
-                AS
-                BEGIN
-                    DELETE FROM [Tickets]
-                    WHERE [ApplicationUserId] IN (SELECT [Id] FROM deleted);
-                END;
-            ");
-
-            migrationBuilder.Sql(@"
-                CREATE TRIGGER [DeleteTicketsOnSeatDelete]
-                ON [Seats]
-                AFTER DELETE
-                AS
-                BEGIN
-                    DELETE FROM [Tickets]
-                    WHERE [SeatId] IN (SELECT [Id] FROM deleted);
-                END;
-            ");
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { 1, null, "Admin", "ADMIN" },
+                    { 2, null, "Customer", "CUSTOMER" },
+                    { 3, null, "ArtistManager", "ARTISTMANAGER" },
+                    { 4, null, "VenueManager", "VENUEMANAGER" },
+                    { 5, null, "HotelManager", "HOTELMANAGER" },
+                    { 6, null, "TaxiManager", "TAXIMANAGER" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Artists_ApplicationUserId",
                 table: "Artists",
-                column: "ApplicationUserId",
-                unique: true);
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -788,10 +771,6 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("DROP TRIGGER IF EXISTS [DeleteLeasesOnArtistDelete];");
-            migrationBuilder.Sql("DROP TRIGGER IF EXISTS [DeleteTicketsOnUserDelete];");
-            migrationBuilder.Sql("DROP TRIGGER IF EXISTS [DeleteTicketsOnSeatDelete];");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

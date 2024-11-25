@@ -1,30 +1,53 @@
-using Concertible.Data;
-using Infrastructure.Data;
+using Concertible.Infrastructure.Services;
+using Core.Entities.Identity;
+using Core.Interfaces;
+using Infrastructure;
+using Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthorizationBuilder();
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-app.MapIdentityApi<ApplicationUser>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
+app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
+
+app.UseExceptionHandler();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Run();

@@ -1,16 +1,16 @@
 ﻿using Concertible.Core.Interfaces;
 using Concertible.Entities;
-using Infrastructure.Data;
-using Infrastructure.Data.Identity;
+using Core.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concertible.Infrastructure.Repositories
+namespace Core.Interfaces
 {
-    public class UserRepository(ApplicationDbContext context) : IUserRepository
+    public interface IVenueRepository : IRepository<Venue>
     {
+        Task<IEnumerable<Venue>> GetAllHeadersAsync(VenueParams? venueParams);
     }
 }

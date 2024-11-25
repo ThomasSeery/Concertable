@@ -1,11 +1,13 @@
 ﻿using Concertible.Entities;
-using Infrastructure.Data;
+using Core.Entities.Identity;
+using Infrastructure.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection.Metadata;
 
-namespace Concertible.Data
+namespace Infrastructure.Data.Identity
 {
     public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser, ApplicationRole, int>(options)
     {
@@ -35,35 +37,40 @@ namespace Concertible.Data
             base.OnModelCreating(modelBuilder);
 
             //Add ApplicationUser Forein Keys
+            /*
+             * Since ApplicationUser is defined in Infrastructure, it cant be
+             * referenced in core.
+             * so we need to explicitly reference the relationships here
+             */
             modelBuilder.Entity<Venue>()
-                .HasOne<VenueOwner>()  
+                .HasOne<VenueManager>()
                 .WithMany(e => e.Venues)  // Establish the one to many relationship between user and venue
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Ticket>()
                 .HasOne<Customer>()
-                .WithMany(e => e.Tickets)  
+                .WithMany(e => e.Tickets)
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Hotel>()
-                .HasOne<HotelPartner>()
+                .HasOne<HotelManager>()
                 .WithMany(e => e.Hotels)
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TaxiCompany>()
-                .HasOne<TaxiPartner>()
+                .HasOne<TaxiManager>()
                 .WithMany(e => e.TaxiComapnies)
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Artist>()
-                .HasOne<ArtistPartner>()
-                .WithOne(e => e.Artist)
-                .HasForeignKey<Artist>(e => e.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+               .HasOne<ArtistManager>()
+               .WithMany(e => e.Artists)
+               .HasForeignKey(e => e.ApplicationUserId)
+               .OnDelete(DeleteBehavior.Cascade);
 
             //Ensure SeatId and EventId is a unique pair
             modelBuilder.Entity<Ticket>()
@@ -79,6 +86,8 @@ namespace Concertible.Data
                 .HasMany(e => e.Tickets)
                 .WithOne(e => e.TaxiBooking)
                 .HasForeignKey(e => e.TaxiBookingId);
+
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
     }
 }
