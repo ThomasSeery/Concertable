@@ -12,7 +12,5 @@ namespace Core.Interfaces
     public interface IVenueService
     {
         Task<IEnumerable<Venue>> GetVenueHeadersAsync(VenueParams? venueParams);
-
-
     }
 }

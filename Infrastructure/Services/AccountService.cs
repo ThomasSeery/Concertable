@@ -50,6 +50,13 @@ namespace Concertible.Infrastructure.Services
             return await userManager.GetUserAsync(principal);
         }
 
+        public async Task<string> GetFirstUserRole(ClaimsPrincipal principal)
+        {
+            var user = await GetCurrentUser(principal);
+            var roles = await userManager.GetRolesAsync(user);
+            return roles.First();
+        }
+
         public async Task<bool> CheckEmailExistsAsync(string email)
         {
             return await userManager.FindByEmailAsync(email) != null;

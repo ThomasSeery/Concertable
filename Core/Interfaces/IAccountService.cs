@@ -13,5 +13,7 @@ namespace Core.Interfaces
         public Task Register(string firstName, string lastName, string email, string password);
 
         public Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal principal);
+
+        public Task<string> GetFirstUserRole(ClaimsPrincipal principal);
     }
 }

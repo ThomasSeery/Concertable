@@ -19,7 +19,7 @@ namespace Infrastructure.Services
             this.venueRepository = venueRepository;
         }
 
-        public async Task<IEnumerable<Venue>> GetVenuesHeadersAsync(VenueParams? venueParams)
+        public async Task<IEnumerable<Venue>> GetVenueHeadersAsync(VenueParams? venueParams)
         {
             return await venueRepository.GetAllHeadersAsync(venueParams);
         }

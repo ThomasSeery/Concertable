@@ -18,10 +18,10 @@ namespace Web.Controllers
             this.venueService = venueService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Venue>>> GetVenues([FromQuery] VenueParams venueParams)
+        [HttpGet("headers")]
+        public async Task<ActionResult<IEnumerable<Venue>>> GetVenueHeaders([FromQuery] VenueParams venueParams)
         {
-            return Ok(venueService.GetVenuesAsync(venueParams));
+            return Ok(venueService.GetVenueHeadersAsync(venueParams));
         }
     }
 }
