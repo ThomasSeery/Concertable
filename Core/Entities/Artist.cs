@@ -1,7 +1,8 @@
-﻿using Concertible.Core.Entities;
+﻿
+using Core.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Concertible.Entities
+namespace Core.Entities
 {
     public class Artist : BaseEntity
     {
@@ -9,7 +10,8 @@ namespace Concertible.Entities
         public string Name { get; set; }
         public string About { get; set; }
         public ICollection<SocialMedia> SocialMedias { get; }
-        public ICollection<Lease> Leases { get; }
+        public ICollection<Register> Registers { get; }
+        public ICollection<Event> Events { get; }
         public ICollection<Video> Videos { get; }
         
     }

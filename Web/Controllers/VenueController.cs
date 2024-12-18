@@ -1,8 +1,9 @@
-﻿using Concertible.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
 using Core.Parameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.DTOs;
 
 namespace Web.Controllers
 {
@@ -22,6 +23,18 @@ namespace Web.Controllers
         public async Task<ActionResult<IEnumerable<Venue>>> GetVenueHeaders([FromQuery] VenueParams venueParams)
         {
             return Ok(venueService.GetVenueHeadersAsync(venueParams));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Venue>> GetVenueDetailsById(int id)
+        {
+            return Ok(venueService.GetVenueDetailsByIdAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Venue>> CreateVenue([FromBody] VenueDto venue)
+        {
+            return Ok(venueService.CreateVenueAsync());
         }
     }
 }

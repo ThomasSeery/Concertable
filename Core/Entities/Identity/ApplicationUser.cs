@@ -1,5 +1,4 @@
-﻿using Concertible.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
 using System.Collections.Generic;
@@ -25,19 +24,9 @@ namespace Core.Entities.Identity
         public ICollection<Venue> Venues { get; }
     }
 
-    public class ArtistManager : ApplicationUser
+    public class ArtistUser : ApplicationUser
     {
-        public ICollection<Artist> Artists { get; set; }
-    }
-
-    public class TaxiManager : ApplicationUser
-    {
-        public ICollection<TaxiCompany> TaxiComapnies { get; }
-    }
-
-    public class HotelManager : ApplicationUser
-    {
-        public ICollection<Hotel> Hotels { get; }
+        public Artist? Artist { get; set; }
     }
 
     public class ApplicationRole : IdentityRole<int>

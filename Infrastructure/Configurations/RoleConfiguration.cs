@@ -29,26 +29,8 @@ namespace Infrastructure.Configurations
                 new ApplicationRole()
                 {
                     Id = 3,
-                    Name = "ArtistManager",
-                    NormalizedName = "ARTISTMANAGER"
-                },
-                new ApplicationRole()
-                {
-                    Id = 4,
-                    Name = "VenueManager",
-                    NormalizedName = "VENUEMANAGER"
-                },
-                new ApplicationRole()
-                {
-                    Id = 5,
-                    Name = "HotelManager",
-                    NormalizedName = "HOTELMANAGER"
-                },
-                new ApplicationRole()
-                {
-                    Id = 6,
-                    Name = "TaxiManager",
-                    NormalizedName = "TAXIMANAGER"
+                    Name = "ArtistUser",
+                    NormalizedName = "ARTISTUSER"
                 });
         }
     }

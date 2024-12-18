@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Concertible.Core.Entities;
 
-namespace Concertible.Entities
+namespace Core.Entities
 {
     [PrimaryKey(nameof(EventId), nameof(GenreId))]
     public class EventGenre

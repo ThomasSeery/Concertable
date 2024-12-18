@@ -2,9 +2,9 @@
 {
     public enum ZoneType
     {
-        GeneralAdmission = 0,
-        ReservedSeat = 1,
-        VIP = 2,
+        GeneralAdmission = 1,
+        ReservedSeat = 2,
+        VIP = 3,
         BackstagePass = 4
     }
 }

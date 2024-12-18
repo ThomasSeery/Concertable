@@ -1,5 +1,5 @@
-﻿using Concertible.Core.Entities;
-using Concertible.Core.Interfaces;
+﻿using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concertible.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {

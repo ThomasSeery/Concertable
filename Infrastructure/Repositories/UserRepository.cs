@@ -1,5 +1,4 @@
-﻿using Concertible.Core.Interfaces;
-using Concertible.Entities;
+﻿using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.Identity;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concertible.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class UserRepository(ApplicationDbContext context) : IUserRepository
     {

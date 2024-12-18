@@ -1,4 +1,4 @@
-﻿using Concertible.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
 using Core.Parameters;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,17 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<Venue>> GetVenueHeadersAsync(VenueParams? venueParams)
         {
-            return await venueRepository.GetAllHeadersAsync(venueParams);
+            return await venueRepository.GetHeadersAsync(venueParams);
+        }
+
+        public async Task<Venue> GetVenueDetailsByIdAsync(int id)
+        {
+            return await venueRepository.GetByIdAsync(id);
+        }
+
+        public async Task<Venue> CreateVenueAsync()
+        {
+            return null;
         }
     }
 }

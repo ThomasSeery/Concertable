@@ -1,6 +1,8 @@
-﻿using Concertible.Core.Entities;
+﻿
 
-namespace Concertible.Entities
+using Core.Entities;
+
+namespace Core.Entities
 {
     public class Genre : BaseEntity
     {

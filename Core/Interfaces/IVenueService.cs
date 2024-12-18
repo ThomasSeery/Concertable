@@ -1,5 +1,4 @@
-﻿using Concertible.Core.Interfaces;
-using Concertible.Entities;
+﻿using Core.Entities;
 using Core.Parameters;
 using System;
 using System.Collections.Generic;
@@ -12,5 +11,9 @@ namespace Core.Interfaces
     public interface IVenueService
     {
         Task<IEnumerable<Venue>> GetVenueHeadersAsync(VenueParams? venueParams);
+
+        Task<Venue> GetVenueDetailsByIdAsync(int id);
+
+        Task<Venue> CreateVenueAsync();
     }
 }

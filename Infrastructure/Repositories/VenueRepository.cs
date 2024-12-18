@@ -1,6 +1,6 @@
-﻿using Concertible.Entities;
-using Concertible.Infrastructure.Repositories;
+﻿using Core.Entities;
 using Core.Interfaces;
+using Infrastructure.Repositories;
 using Core.Parameters;
 using Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +16,10 @@ namespace Infrastructure.Repositories
     {
         public VenueRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<IEnumerable<Venue>> GetAllHeadersAsync(VenueParams? venueParams)
+        public async Task<IEnumerable<Venue>> GetHeadersAsync(VenueParams? venueParams)
         {
             var query = context.Venues.AsQueryable();
             query.Select(v => new { v.Id, v.Name, v.Longitude, v.Latitude });
-            query.Where(v => v.Posted);
 
             if (!string.IsNullOrWhiteSpace(venueParams?.Sort))
             {

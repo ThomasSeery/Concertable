@@ -1,7 +1,5 @@
-﻿using Concertible.Infrastructure.Repositories;
-using Core.Entities.Identity;
+﻿using Infrastructure.Repositories;
 using Core.Exceptions;
-using Core.Interfaces;
 using Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,8 +10,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Interfaces;
+using Core.Entities.Identity;
 
-namespace Concertible.Infrastructure.Services
+namespace Infrastructure.Services
 {
     public class AccountService : IAccountService
     {

@@ -1,5 +1,4 @@
-﻿using Concertible.Core.Interfaces;
-using Concertible.Entities;
+﻿using Core.Entities;
 using Core.Parameters;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,6 @@ namespace Core.Interfaces
 {
     public interface IVenueRepository : IRepository<Venue>
     {
-        Task<IEnumerable<Venue>> GetAllHeadersAsync(VenueParams? venueParams);
+        Task<IEnumerable<Venue>> GetHeadersAsync(VenueParams? venueParams);
     }
 }

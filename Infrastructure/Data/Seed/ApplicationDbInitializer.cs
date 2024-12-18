@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Interfaces
+namespace Infrastructure.Data.Seed
 {
-    public interface IUserRepository
+    internal class ApplicationDbContextSeed
     {
-
     }
 }

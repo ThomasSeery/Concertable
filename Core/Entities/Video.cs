@@ -1,6 +1,6 @@
-﻿using Concertible.Core.Entities;
+﻿
 
-namespace Concertible.Entities
+namespace Core.Entities
 {
     public class Video : BaseEntity
     {
