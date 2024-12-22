@@ -6,7 +6,7 @@ namespace Core.Entities
     {
         public int TicketId { get; set; }
         public byte Stars { get; set; }
-        public string? Description { get; set; }
+        public string? Details { get; set; }
         public Ticket Ticket { get; set; }
     }
 }

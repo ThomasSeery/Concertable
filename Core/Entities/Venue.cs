@@ -11,11 +11,13 @@ namespace Core.Entities
         public string About { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public string ImageUrl { get; set; }
         public string County { get; set; }
         public string Town { get; set; }
         public bool Approved { get; set; }
 
         public ICollection<Listing> Listings { get; set; }
         public ICollection<VenueImage> Images { get; }
+
     }
 }

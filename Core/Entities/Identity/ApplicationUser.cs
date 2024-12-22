@@ -10,8 +10,6 @@ namespace Core.Entities.Identity
 {
     public class ApplicationUser : IdentityUser<int> 
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 
     public class Customer : ApplicationUser
@@ -19,7 +17,7 @@ namespace Core.Entities.Identity
         public ICollection<Ticket> Tickets { get; set; }
     }
 
-    public class VenueManager : ApplicationUser
+    public class VenueOwner : ApplicationUser
     {
         public ICollection<Venue> Venues { get; }
     }

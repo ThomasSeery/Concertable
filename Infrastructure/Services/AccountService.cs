@@ -18,21 +18,21 @@ namespace Infrastructure.Services
     public class AccountService : IAccountService
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public AccountService(UserManager<ApplicationUser> userManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
-        public async Task Register(string firstName, string lastName, string email, string password)
+        public async Task Register(string email, string password)
         {
             if (CheckEmailExistsAsync(email).Result)
                 throw new BadRequestException("Email already exists");
 
             var user = new ApplicationUser
             {
-                FirstName = firstName,
-                LastName = lastName,
                 UserName = email,
                 Email = email
             };
@@ -45,14 +45,18 @@ namespace Infrastructure.Services
             await userManager.AddToRoleAsync(user, "Customer");
         }
 
+        public async Task Logout()
+        {
+            await signInManager.SignOutAsync();
+        }
+
         public async Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal principal)
         {
             return await userManager.GetUserAsync(principal);
         }
 
-        public async Task<string> GetFirstUserRole(ClaimsPrincipal principal)
+        public async Task<string> GetFirstUserRole(ApplicationUser user)
         {
-            var user = await GetCurrentUser(principal);
             var roles = await userManager.GetRolesAsync(user);
             return roles.First();
         }

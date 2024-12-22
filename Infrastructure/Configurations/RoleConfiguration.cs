@@ -31,6 +31,12 @@ namespace Infrastructure.Configurations
                     Id = 3,
                     Name = "ArtistUser",
                     NormalizedName = "ARTISTUSER"
+                },
+                new ApplicationRole()
+                {
+                    Id = 4,
+                    Name = "VenueOwner",
+                    NormalizedName = "VENUEOWNER"
                 });
         }
     }

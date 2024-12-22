@@ -12,11 +12,13 @@ namespace Infrastructure.Data.Identity
     public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser, ApplicationRole, int>(options)
     {
         public DbSet<Artist> Artists { get; set; }
+        public DbSet<ArtistGenre> ArtistGenres { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventGenre> EventGenres { get; set; }
         public DbSet<EventImage> EventImages { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Listing> Listings { get; set; }
+        public DbSet<ListingGenre> ListingGenres { get; set; }
         public DbSet<Register> Registers { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
@@ -37,7 +39,7 @@ namespace Infrastructure.Data.Identity
              * so we need to explicitly reference the relationships here
              */
             modelBuilder.Entity<Venue>()
-                .HasOne<VenueManager>()
+                .HasOne<VenueOwner>()
                 .WithMany(e => e.Venues)  // Establish the one to many relationship between user and venue
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -53,10 +55,6 @@ namespace Infrastructure.Data.Identity
                .WithOne(e => e.Artist)
                .HasForeignKey<Artist>(e => e.ApplicationUserId)
                .OnDelete(DeleteBehavior.Cascade);
-
-            //Ensure SeatId and EventId is a unique pair
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(p => new { p.SeatId, p.EventId }).IsUnique();
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
         

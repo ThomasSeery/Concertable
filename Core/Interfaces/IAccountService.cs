@@ -10,10 +10,11 @@ namespace Core.Interfaces
 {
     public interface IAccountService
     {
-        public Task Register(string firstName, string lastName, string email, string password);
+        public Task Register(string email, string password);
 
+        public Task Logout();
         public Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal principal);
 
-        public Task<string> GetFirstUserRole(ClaimsPrincipal principal);
+        public Task<string> GetFirstUserRole(ApplicationUser user);
     }
 }

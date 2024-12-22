@@ -7,8 +7,6 @@ namespace Core.Entities
     {
         public int ApplicationUserId { get; set; }
         public int EventId { get; set; }
-        public int SeatId { get; set; }
-        public decimal Price { get; set; }
         public DateTime PurchaseDate { get; set; }
         public Event Event { get; set; }
         public Review? Review { get; set; }

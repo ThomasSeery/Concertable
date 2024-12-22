@@ -9,6 +9,8 @@ namespace Core.Entities
         public int ApplicationUserId { get; set; }
         public string Name { get; set; }
         public string About { get; set; }
+        public string ImageUrl { get; set; }
+        public ICollection<ArtistGenre> ArtistGenres { get; set; }
         public ICollection<SocialMedia> SocialMedias { get; }
         public ICollection<Register> Registers { get; }
         public ICollection<Event> Events { get; }

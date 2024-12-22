@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241218131801_InitialCreate")]
+    [Migration("20241219091509_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -40,6 +40,10 @@ namespace Infrastructure.Migrations
                     b.Property<int>("ApplicationUserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -50,6 +54,21 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Artists");
+                });
+
+            modelBuilder.Entity("Core.Entities.ArtistGenre", b =>
+                {
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("ArtistGenres");
                 });
 
             modelBuilder.Entity("Core.Entities.Event", b =>
@@ -64,8 +83,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ArtistId")
+                    b.Property<int>("ArtistId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ListingId")
                         .HasColumnType("int");
@@ -73,6 +96,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -187,6 +213,12 @@ namespace Infrastructure.Migrations
                             Id = 3,
                             Name = "ArtistUser",
                             NormalizedName = "ARTISTUSER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "VenueOwner",
+                            NormalizedName = "VENUEOWNER"
                         });
                 });
 
@@ -216,14 +248,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -283,7 +307,13 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Pay")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("VenueId")
@@ -294,6 +324,21 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("Listings");
+                });
+
+            modelBuilder.Entity("Core.Entities.ListingGenre", b =>
+                {
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListingId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("ListingGenres");
                 });
 
             modelBuilder.Entity("Core.Entities.Register", b =>
@@ -322,7 +367,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Stars")
@@ -378,23 +423,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("SeatId", "EventId")
-                        .IsUnique();
 
                     b.ToTable("Tickets");
                 });
@@ -418,6 +454,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("County")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -606,11 +646,11 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
+            modelBuilder.Entity("Core.Entities.Identity.VenueOwner", b =>
                 {
                     b.HasBaseType("Core.Entities.Identity.ApplicationUser");
 
-                    b.HasDiscriminator().HasValue("VenueManager");
+                    b.HasDiscriminator().HasValue("VenueOwner");
                 });
 
             modelBuilder.Entity("Core.Entities.Artist", b =>
@@ -622,17 +662,40 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Core.Entities.ArtistGenre", b =>
+                {
+                    b.HasOne("Core.Entities.Artist", "Artist")
+                        .WithMany("ArtistGenres")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artist");
+
+                    b.Navigation("Genre");
+                });
+
             modelBuilder.Entity("Core.Entities.Event", b =>
                 {
-                    b.HasOne("Core.Entities.Artist", null)
+                    b.HasOne("Core.Entities.Artist", "Artist")
                         .WithMany("Events")
-                        .HasForeignKey("ArtistId");
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Core.Entities.Listing", "Listing")
                         .WithMany()
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Artist");
 
                     b.Navigation("Listing");
                 });
@@ -676,6 +739,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("Core.Entities.ListingGenre", b =>
+                {
+                    b.HasOne("Core.Entities.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Listing", "Listing")
+                        .WithMany("ListingGenres")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("Core.Entities.Register", b =>
@@ -738,7 +820,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Venue", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.VenueManager", null)
+                    b.HasOne("Core.Entities.Identity.VenueOwner", null)
                         .WithMany("Venues")
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -820,6 +902,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Artist", b =>
                 {
+                    b.Navigation("ArtistGenres");
+
                     b.Navigation("Events");
 
                     b.Navigation("Registers");
@@ -841,6 +925,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Genre", b =>
                 {
                     b.Navigation("EventGenres");
+                });
+
+            modelBuilder.Entity("Core.Entities.Listing", b =>
+                {
+                    b.Navigation("ListingGenres");
                 });
 
             modelBuilder.Entity("Core.Entities.Ticket", b =>
@@ -865,7 +954,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
+            modelBuilder.Entity("Core.Entities.Identity.VenueOwner", b =>
                 {
                     b.Navigation("Venues");
                 });

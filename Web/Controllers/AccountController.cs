@@ -1,11 +1,12 @@
 ﻿using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.DTOs;
 
-namespace Concertible.Api.Controllers
+namespace Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -22,8 +23,6 @@ namespace Concertible.Api.Controllers
         public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
         {
             await accountService.Register(
-                registerDto.FirstName,
-                registerDto.LastName,
                 registerDto.Email,
                 registerDto.Password);
 
@@ -31,16 +30,27 @@ namespace Concertible.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet("user")]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await accountService.Logout();
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("current-user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await accountService.GetCurrentUser(User);
+
+            if (user == null) return NoContent();
+
+            var role = await accountService.GetFirstUserRole(user);
             return Ok(new UserDto()
             {
                 Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Role = ""
+                Role = role
             });
         }
     }

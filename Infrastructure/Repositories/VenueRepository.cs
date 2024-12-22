@@ -12,14 +12,18 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    internal class VenueRepository : Repository<Venue>, IVenueRepository
+    public class VenueRepository : Repository<Venue>, IVenueRepository
     {
         public VenueRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task<IEnumerable<Venue>> GetHeadersAsync(VenueParams? venueParams)
         {
             var query = context.Venues.AsQueryable();
-            query.Select(v => new { v.Id, v.Name, v.Longitude, v.Latitude });
+            query = query.Select(v => new Venue
+            {
+                Id = v.Id,
+                Name = v.Name
+            });
 
             if (!string.IsNullOrWhiteSpace(venueParams?.Sort))
             {
