@@ -29,14 +29,14 @@ namespace Infrastructure.Configurations
                 new ApplicationRole()
                 {
                     Id = 3,
-                    Name = "ArtistUser",
-                    NormalizedName = "ARTISTUSER"
+                    Name = "ArtistManager",
+                    NormalizedName = "ARTISTMANAGER"
                 },
                 new ApplicationRole()
                 {
                     Id = 4,
-                    Name = "VenueOwner",
-                    NormalizedName = "VENUEOWNER"
+                    Name = "VenueManager",
+                    NormalizedName = "VENUEMANAGER"
                 });
         }
     }

@@ -34,13 +34,13 @@ namespace Infrastructure.Data
                     },
                     new ApplicationUser
                     {
-                        UserName = "artistuser@test.com",
-                        Email = "artistuser@test.com",
+                        UserName = "artistmanager@test.com",
+                        Email = "artistmanager@test.com",
                     },
                     new ApplicationUser
                     {
-                        UserName = "venueowner@test.com",
-                        Email = "venueowner@test.com",
+                        UserName = "venuemanager@test.com",
+                        Email = "venuemanager@test.com",
                     },
                     new ApplicationUser
                     {
@@ -54,8 +54,8 @@ namespace Infrastructure.Data
                 }
                 await userManager.AddToRoleAsync(users[0], "Admin");
                 await userManager.AddToRoleAsync(users[1], "Customer");
-                await userManager.AddToRoleAsync(users[2], "ArtistUser");
-                await userManager.AddToRoleAsync(users[3], "VenueOwner");
+                await userManager.AddToRoleAsync(users[2], "ArtistManager");
+                await userManager.AddToRoleAsync(users[3], "VenueManager");
                 await userManager.AddToRoleAsync(users[4], "Customer");
             }
             //Artists

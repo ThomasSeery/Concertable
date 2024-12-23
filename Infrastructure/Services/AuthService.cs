@@ -15,12 +15,12 @@ using Core.Entities.Identity;
 
 namespace Infrastructure.Services
 {
-    public class AccountService : IAccountService
+    public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -50,7 +50,7 @@ namespace Infrastructure.Services
             await signInManager.SignOutAsync();
         }
 
-        public async Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal principal)
+        public async Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal principal)
         {
             return await userManager.GetUserAsync(principal);
         }

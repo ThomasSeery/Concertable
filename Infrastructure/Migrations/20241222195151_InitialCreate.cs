@@ -507,8 +507,8 @@ namespace Infrastructure.Migrations
                 {
                     { 1, null, "Admin", "ADMIN" },
                     { 2, null, "Customer", "CUSTOMER" },
-                    { 3, null, "ArtistUser", "ARTISTUSER" },
-                    { 4, null, "VenueOwner", "VENUEOWNER" }
+                    { 3, null, "ArtistManager", "ARTISTMANAGER" },
+                    { 4, null, "VenueManager", "VENUEMANAGER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -625,7 +625,8 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Venues_ApplicationUserId",
                 table: "Venues",
-                column: "ApplicationUserId");
+                column: "ApplicationUserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Videos_ArtistId",

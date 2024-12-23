@@ -39,9 +39,9 @@ namespace Infrastructure.Data.Identity
              * so we need to explicitly reference the relationships here
              */
             modelBuilder.Entity<Venue>()
-                .HasOne<VenueOwner>()
-                .WithMany(e => e.Venues)  // Establish the one to many relationship between user and venue
-                .HasForeignKey(e => e.ApplicationUserId)
+                .HasOne<VenueManager>()
+                .WithOne(e => e.Venue)  // Establish the one to one relationship between user and venue
+                .HasForeignKey<Venue>(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Ticket>()
@@ -51,7 +51,7 @@ namespace Infrastructure.Data.Identity
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Artist>()
-               .HasOne<ArtistUser>()
+               .HasOne<ArtistManager>()
                .WithOne(e => e.Artist)
                .HasForeignKey<Artist>(e => e.ApplicationUserId)
                .OnDelete(DeleteBehavior.Cascade);

@@ -1,10 +1,13 @@
 ﻿using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Parameters;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,10 +16,12 @@ namespace Infrastructure.Services
     public class VenueService : IVenueService
     {
         private readonly IVenueRepository venueRepository;
+        private readonly IAuthService authService;
 
-        public VenueService(IVenueRepository venueRepository)
+        public VenueService(IVenueRepository venueRepository, IAuthService authService)
         {
             this.venueRepository = venueRepository;
+            this.authService = authService;
         }
 
         public async Task<IEnumerable<Venue>> GetVenueHeadersAsync(VenueParams? venueParams)
@@ -32,6 +37,13 @@ namespace Infrastructure.Services
         public async Task<Venue> CreateVenueAsync()
         {
             return null;
+        }
+
+        public async Task<Venue?> GetUserVenueAsync(ClaimsPrincipal principal)
+        {
+            var user = await authService.GetCurrentUser(principal);
+            return await venueRepository.GetByUserIdAsync(user.Id);
+
         }
     }
 }

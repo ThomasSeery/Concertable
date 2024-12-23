@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IAccountService
+    public interface IAuthService
     {
         public Task Register(string email, string password);
 
         public Task Logout();
-        public Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal principal);
+
+        public Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal principal);
 
         public Task<string> GetFirstUserRole(ApplicationUser user);
     }

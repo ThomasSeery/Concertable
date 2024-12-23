@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241219091509_InitialCreate")]
+    [Migration("20241222195151_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -211,14 +211,14 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "ArtistUser",
-                            NormalizedName = "ARTISTUSER"
+                            Name = "ArtistManager",
+                            NormalizedName = "ARTISTMANAGER"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "VenueOwner",
-                            NormalizedName = "VENUEOWNER"
+                            Name = "VenueManager",
+                            NormalizedName = "VENUEMANAGER"
                         });
                 });
 
@@ -480,7 +480,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
 
                     b.ToTable("Venues");
                 });
@@ -632,11 +633,11 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.ArtistUser", b =>
+            modelBuilder.Entity("Core.Entities.Identity.ArtistManager", b =>
                 {
                     b.HasBaseType("Core.Entities.Identity.ApplicationUser");
 
-                    b.HasDiscriminator().HasValue("ArtistUser");
+                    b.HasDiscriminator().HasValue("ArtistManager");
                 });
 
             modelBuilder.Entity("Core.Entities.Identity.Customer", b =>
@@ -646,16 +647,16 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.VenueOwner", b =>
+            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
                 {
                     b.HasBaseType("Core.Entities.Identity.ApplicationUser");
 
-                    b.HasDiscriminator().HasValue("VenueOwner");
+                    b.HasDiscriminator().HasValue("VenueManager");
                 });
 
             modelBuilder.Entity("Core.Entities.Artist", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.ArtistUser", null)
+                    b.HasOne("Core.Entities.Identity.ArtistManager", null)
                         .WithOne("Artist")
                         .HasForeignKey("Core.Entities.Artist", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -820,9 +821,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Venue", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.VenueOwner", null)
-                        .WithMany("Venues")
-                        .HasForeignKey("ApplicationUserId")
+                    b.HasOne("Core.Entities.Identity.VenueManager", null)
+                        .WithOne("Venue")
+                        .HasForeignKey("Core.Entities.Venue", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -944,7 +945,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Listings");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.ArtistUser", b =>
+            modelBuilder.Entity("Core.Entities.Identity.ArtistManager", b =>
                 {
                     b.Navigation("Artist");
                 });
@@ -954,9 +955,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.VenueOwner", b =>
+            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
                 {
-                    b.Navigation("Venues");
+                    b.Navigation("Venue");
                 });
 #pragma warning restore 612, 618
         }

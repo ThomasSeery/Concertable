@@ -10,19 +10,19 @@ namespace Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly IAccountService accountService;
+        private readonly IAuthService authService;
 
-        public AccountController(IAccountService accountService)
+        public AuthController(IAuthService authService)
         {
-            this.accountService = accountService;
+            this.authService = authService;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            await accountService.Register(
+            await authService.Register(
                 registerDto.Email,
                 registerDto.Password);
 
@@ -33,7 +33,7 @@ namespace Web.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
-            await accountService.Logout();
+            await authService.Logout();
 
             return NoContent();
         }
@@ -42,14 +42,15 @@ namespace Web.Controllers
         [HttpGet("current-user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            var user = await accountService.GetCurrentUser(User);
+            var user = await authService.GetCurrentUser(User);
 
             if (user == null) return NoContent();
 
-            var role = await accountService.GetFirstUserRole(user);
+            var role = await authService.GetFirstUserRole(user);
             return Ok(new UserDto()
             {
                 Id = user.Id,
+                Email = user.Email,
                 Role = role
             });
         }

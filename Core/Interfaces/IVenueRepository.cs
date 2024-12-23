@@ -11,5 +11,6 @@ namespace Core.Interfaces
     public interface IVenueRepository : IRepository<Venue>
     {
         Task<IEnumerable<Venue>> GetHeadersAsync(VenueParams? venueParams);
+        Task<Venue?> GetByUserIdAsync(int id);
     }
 }

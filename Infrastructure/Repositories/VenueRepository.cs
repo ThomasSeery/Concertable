@@ -31,5 +31,13 @@ namespace Infrastructure.Repositories
             }
             return await query.ToListAsync();
         }
+
+        public async Task<Venue?> GetByUserIdAsync(int id)
+        {
+            var query = context.Venues.AsQueryable();
+            query = query.Where(v => v.ApplicationUserId == id);
+
+            return await query.FirstOrDefaultAsync();
+        }
     }
 }
