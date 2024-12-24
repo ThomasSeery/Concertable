@@ -65,7 +65,7 @@ namespace Infrastructure.Data
                 {
                     new Artist
                     {
-                        ApplicationUserId = 3,
+                        UserId = 3,
                         Name = "The Testys",
                         About = "We are a Rock Band!",
                         ImageUrl = ""
@@ -79,7 +79,7 @@ namespace Infrastructure.Data
             {
                 var venue = new Venue
                 {
-                    ApplicationUserId = 4,
+                    UserId = 4,
                     Name = "The Test Venue",
                     About = "Test Venue",
                     Longitude = 0,
@@ -148,14 +148,14 @@ namespace Infrastructure.Data
                  {
                     new Ticket
                     {
-                        ApplicationUserId = 2,
+                        UserId = 2,
                         EventId = 1,
                         PurchaseDate = DateTime.Now
 
                     },
                     new Ticket
                     {
-                        ApplicationUserId = 5,
+                        UserId = 5,
                         EventId = 1,
                         PurchaseDate = DateTime.Now
                     },

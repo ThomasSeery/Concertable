@@ -17,12 +17,18 @@ namespace Core.Entities.Identity
         public ICollection<Ticket> Tickets { get; set; }
     }
 
-    public class VenueManager : ApplicationUser
+    public class Manager : ApplicationUser
+    {
+        public ICollection<Message> SentMessages { get; set; }
+        public ICollection<Message> ReceivedMessages { get; set; }
+    }
+
+    public class VenueManager : Manager
     {
         public Venue? Venue { get; }
     }
 
-    public class ArtistManager : ApplicationUser
+    public class ArtistManager : Manager
     {
         public Artist? Artist { get; set; }
     }

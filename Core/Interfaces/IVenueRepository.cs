@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IVenueRepository : IRepository<Venue>
+    public interface IVenueRepository : IBaseEntityRepository<Venue>
     {
         Task<IEnumerable<Venue>> GetHeadersAsync(VenueParams? venueParams);
         Task<Venue?> GetByUserIdAsync(int id);

@@ -12,16 +12,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Interfaces;
 using Core.Entities.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
 
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthService(
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager)
         {
+            this.httpContextAccessor = httpContextAccessor;
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
@@ -50,8 +56,9 @@ namespace Infrastructure.Services
             await signInManager.SignOutAsync();
         }
 
-        public async Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal principal)
+        public async Task<ApplicationUser?> GetCurrentUser()
         {
+            var principal = httpContextAccessor.HttpContext.User;
             return await userManager.GetUserAsync(principal);
         }
 

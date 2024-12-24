@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T> where T : class
     {
         protected readonly ApplicationDbContext context;
 
@@ -24,16 +24,9 @@ namespace Infrastructure.Repositories
             context.Set<T>().Add(entity);
         }
 
-        public bool Exists(int id) => context.Set<T>().Any(e => e.Id == id);
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await context.Set<T>().ToListAsync();
-        }
-
-        public async Task<T?> GetByIdAsync(int id)
-        {
-            return await context.Set<T>().FindAsync(id);
         }
 
         public void Remove(T entity)

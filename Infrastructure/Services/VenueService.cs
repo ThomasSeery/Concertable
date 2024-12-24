@@ -34,14 +34,17 @@ namespace Infrastructure.Services
             return await venueRepository.GetByIdAsync(id);
         }
 
-        public async Task<Venue> CreateVenueAsync()
+        public void CreateVenue(Venue venue)
         {
-            return null;
+            var user = authService.GetCurrentUser();
+            venue.UserId = user.Id;
+
+            venueRepository.Add(venue);
         }
 
-        public async Task<Venue?> GetUserVenueAsync(ClaimsPrincipal principal)
+        public async Task<Venue?> GetUserVenueAsync()
         {
-            var user = await authService.GetCurrentUser(principal);
+            var user = authService.GetCurrentUser();
             return await venueRepository.GetByUserIdAsync(user.Id);
 
         }

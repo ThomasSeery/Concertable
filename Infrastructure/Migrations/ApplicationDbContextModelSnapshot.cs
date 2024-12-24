@@ -34,9 +34,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ApplicationUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -45,10 +42,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Artists");
                 });
@@ -338,6 +337,39 @@ namespace Infrastructure.Migrations
                     b.ToTable("ListingGenres");
                 });
 
+            modelBuilder.Entity("Core.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FromId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MessageContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ToId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromId");
+
+                    b.HasIndex("ToId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("Core.Entities.Register", b =>
                 {
                     b.Property<int>("ListingId")
@@ -414,20 +446,25 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ApplicationUserId")
+                    b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EventId")
+                    b.Property<int?>("EventId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("EventId");
+
+                    b.HasIndex("EventId1");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tickets");
                 });
@@ -444,9 +481,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ApplicationUserId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
 
@@ -461,9 +495,6 @@ namespace Infrastructure.Migrations
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<int>("ListingId")
-                        .HasColumnType("int");
-
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
@@ -475,10 +506,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Venues");
                 });
@@ -630,34 +663,22 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.ArtistManager", b =>
+            modelBuilder.Entity("Core.Entities.Identity.Manager", b =>
                 {
                     b.HasBaseType("Core.Entities.Identity.ApplicationUser");
 
-                    b.HasDiscriminator().HasValue("ArtistManager");
-                });
-
-            modelBuilder.Entity("Core.Entities.Identity.Customer", b =>
-                {
-                    b.HasBaseType("Core.Entities.Identity.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Customer");
-                });
-
-            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
-                {
-                    b.HasBaseType("Core.Entities.Identity.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("VenueManager");
+                    b.HasDiscriminator().HasValue("Manager");
                 });
 
             modelBuilder.Entity("Core.Entities.Artist", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.ArtistManager", null)
-                        .WithOne("Artist")
-                        .HasForeignKey("Core.Entities.Artist", "ApplicationUserId")
+                    b.HasOne("Core.Entities.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.ArtistGenre", b =>
@@ -690,7 +711,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.Listing", "Listing")
                         .WithMany()
                         .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Artist");
@@ -758,6 +779,37 @@ namespace Infrastructure.Migrations
                     b.Navigation("Listing");
                 });
 
+            modelBuilder.Entity("Core.Entities.Message", b =>
+                {
+                    b.HasOne("Core.Entities.Identity.ApplicationUser", "FromUser")
+                        .WithMany()
+                        .HasForeignKey("FromId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Identity.Manager", null)
+                        .WithMany("SentMessages")
+                        .HasForeignKey("FromId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Identity.ApplicationUser", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Identity.Manager", null)
+                        .WithMany("ReceivedMessages")
+                        .HasForeignKey("ToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("ToUser");
+                });
+
             modelBuilder.Entity("Core.Entities.Register", b =>
                 {
                     b.HasOne("Core.Entities.Artist", "Artist")
@@ -769,7 +821,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.Listing", "Listing")
                         .WithMany()
                         .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Artist");
@@ -801,28 +853,36 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Ticket", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.Customer", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Core.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Core.Entities.Event", "Event")
+                    b.HasOne("Core.Entities.Event", null)
                         .WithMany("SoldTickets")
-                        .HasForeignKey("EventId")
+                        .HasForeignKey("EventId1");
+
+                    b.HasOne("Core.Entities.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Venue", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.VenueManager", null)
-                        .WithOne("Venue")
-                        .HasForeignKey("Core.Entities.Venue", "ApplicationUserId")
+                    b.HasOne("Core.Entities.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.VenueImage", b =>
@@ -942,19 +1002,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Listings");
                 });
 
-            modelBuilder.Entity("Core.Entities.Identity.ArtistManager", b =>
+            modelBuilder.Entity("Core.Entities.Identity.Manager", b =>
                 {
-                    b.Navigation("Artist");
-                });
+                    b.Navigation("ReceivedMessages");
 
-            modelBuilder.Entity("Core.Entities.Identity.Customer", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("Core.Entities.Identity.VenueManager", b =>
-                {
-                    b.Navigation("Venue");
+                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }

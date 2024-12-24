@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection.Metadata;
+using static Core.Entities.Identity.Manager;
 
 namespace Infrastructure.Data.Identity
 {
@@ -24,6 +25,7 @@ namespace Infrastructure.Data.Identity
         public DbSet<SocialMedia> SocialMedias { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<Message> Messages { get; set; }
         public DbSet<Venue> Venues { get; set; }
         public DbSet<VenueImage> VenueImages { get; set; }
         public DbSet<Video> Videos { get; set; }
@@ -34,27 +36,70 @@ namespace Infrastructure.Data.Identity
 
             //Add ApplicationUser Forein Keys
             /*
-             * Since ApplicationUser is defined in Infrastructure, it cant be
-             * referenced in core.
-             * so we need to explicitly reference the relationships here
+             * Where the names between the ids and objects do not coinside
+             * e.g. FromId (should be FromUserId to match) and FromUser, we need to
+             * explicitly reference these here so .NET knows the relationship between them
              */
-            modelBuilder.Entity<Venue>()
-                .HasOne<VenueManager>()
-                .WithOne(e => e.Venue)  // Establish the one to one relationship between user and venue
-                .HasForeignKey<Venue>(e => e.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Venue>()
+            //    .HasOne<VenueManager>()
+            //    .WithOne(e => e.Venue)  // Establish the one to one relationship between user and venue
+            //    .HasForeignKey<Venue>(e => e.UserId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Ticket>()
+            //    .HasOne<Customer>()
+            //    .WithMany(e => e.Tickets)
+            //    .HasForeignKey(e => e.UserId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Artist>()
+            //   .HasOne<ArtistManager>()
+            //   .WithOne(e => e.Artist)
+            //   .HasForeignKey<Artist>(e => e.UserId)
+            //   .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Message>()
+                .HasOne<Manager>()
+                .WithMany(e => e.SentMessages)
+                .HasForeignKey(m => m.FromId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne<Manager>()
+                .WithMany(e => e.ReceivedMessages)
+                .HasForeignKey(m => m.ToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.FromUser)
+                .WithMany()
+                .HasForeignKey(m => m.FromId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.ToUser)
+                .WithMany()
+                .HasForeignKey(m => m.ToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //Temporary Fix
+            modelBuilder.Entity<Event>()
+                .HasOne(e => e.Listing)
+                .WithMany()
+                .HasForeignKey(e => e.ListingId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Register>()
+                .HasOne(e => e.Listing)
+                .WithMany()
+                .HasForeignKey(e => e.ListingId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Ticket>()
-                .HasOne<Customer>()
-                .WithMany(e => e.Tickets)
-                .HasForeignKey(e => e.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Artist>()
-               .HasOne<ArtistManager>()
-               .WithOne(e => e.Artist)
-               .HasForeignKey<Artist>(e => e.ApplicationUserId)
-               .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(e => e.Event)
+                .WithMany()
+                .HasForeignKey(e => e.EventId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
         

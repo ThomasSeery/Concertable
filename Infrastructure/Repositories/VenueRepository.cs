@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class VenueRepository : Repository<Venue>, IVenueRepository
+    public class VenueRepository : BaseEntityRepository<Venue>, IVenueRepository
     {
         public VenueRepository(ApplicationDbContext context) : base(context) { }
 
@@ -35,7 +35,7 @@ namespace Infrastructure.Repositories
         public async Task<Venue?> GetByUserIdAsync(int id)
         {
             var query = context.Venues.AsQueryable();
-            query = query.Where(v => v.ApplicationUserId == id);
+            query = query.Where(v => v.UserId == id);
 
             return await query.FirstOrDefaultAsync();
         }

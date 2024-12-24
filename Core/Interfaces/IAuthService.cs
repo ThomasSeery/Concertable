@@ -14,7 +14,7 @@ namespace Core.Interfaces
 
         public Task Logout();
 
-        public Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal principal);
+        public Task<ApplicationUser?> GetCurrentUser();
 
         public Task<string> GetFirstUserRole(ApplicationUser user);
     }

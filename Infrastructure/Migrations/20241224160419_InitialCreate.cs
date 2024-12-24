@@ -95,7 +95,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     About = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -104,8 +104,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Artists", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Artists_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Artists_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -197,17 +197,45 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FromId = table.Column<int>(type: "int", nullable: false),
+                    ToId = table.Column<int>(type: "int", nullable: false),
+                    SentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Read = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_FromId",
+                        column: x => x.FromId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_ToId",
+                        column: x => x.ToId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Venues",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
-                    ListingId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     About = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Longitude = table.Column<double>(type: "float", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     County = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Town = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -217,8 +245,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Venues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Venues_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Venues_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -459,22 +487,28 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tickets_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Tickets_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_Events_EventId",
                         column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Events_EventId1",
+                        column: x => x.EventId1,
                         principalTable: "Events",
                         principalColumn: "Id");
                 });
@@ -517,10 +551,9 @@ namespace Infrastructure.Migrations
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Artists_ApplicationUserId",
+                name: "IX_Artists_UserId",
                 table: "Artists",
-                column: "ApplicationUserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -592,6 +625,16 @@ namespace Infrastructure.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_FromId",
+                table: "Messages",
+                column: "FromId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ToId",
+                table: "Messages",
+                column: "ToId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Registers_ArtistId",
                 table: "Registers",
                 column: "ArtistId");
@@ -608,14 +651,19 @@ namespace Infrastructure.Migrations
                 column: "ArtistId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_ApplicationUserId",
-                table: "Tickets",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_EventId",
                 table: "Tickets",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_EventId1",
+                table: "Tickets",
+                column: "EventId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_UserId",
+                table: "Tickets",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VenueImages_VenueId",
@@ -623,10 +671,9 @@ namespace Infrastructure.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Venues_ApplicationUserId",
+                name: "IX_Venues_UserId",
                 table: "Venues",
-                column: "ApplicationUserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Videos_ArtistId",
@@ -663,6 +710,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ListingGenres");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Registers");

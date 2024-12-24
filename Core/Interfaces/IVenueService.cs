@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.Identity;
 using Core.Parameters;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace Core.Interfaces
 
         Task<Venue> GetVenueDetailsByIdAsync(int id);
 
-        Task<Venue?> GetUserVenueAsync(ClaimsPrincipal principal);
+        Task<Venue?> GetUserVenueAsync();
 
-        Task<Venue> CreateVenueAsync();
+        void CreateVenue(Venue venue);
     }
 }

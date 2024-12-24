@@ -2,11 +2,13 @@
 {
     public class VenueDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public string About { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public CoordinatesDto Coordinates { get; set; }
+        public string County { get; set; }
+        public string Town { get; set; }
+        public string ImageUrl { get; set; }
         public bool Approved { get; set; }
     }
 }
