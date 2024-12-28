@@ -10,5 +10,6 @@ namespace Core.Interfaces
     public interface IRegisterService
     {
         Task<IEnumerable<Register>> GetRegistrationsForListingIdAsync(int listingId);
+        Task RegisterForListing(int listingId);
     }
 }

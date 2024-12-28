@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IRegisterRepository : IRepository<Register>
+    public interface IArtistRepository
     {
-        Task<IEnumerable<Register>> GetAllForListingIdAsync(int listingId);
+        Task<Artist?> GetByUserIdAsync(int id);
     }
 }

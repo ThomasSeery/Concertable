@@ -24,10 +24,12 @@ namespace Web.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [Authorize(Roles = "ArtistManager")]
+        [HttpPost("{listingId}")]
         public async Task<ActionResult> RegisterForListing(int listingId)
         {
-
+            await registerService.RegisterForListing(listingId);
+            return CreatedAtAction("", new { });
         }
     }
 }
