@@ -34,9 +34,9 @@ namespace Infrastructure.Services
             return await venueRepository.GetByIdAsync(id);
         }
 
-        public void CreateVenue(Venue venue)
+        public async void CreateVenue(Venue venue)
         {
-            var user = authService.GetCurrentUser();
+            var user = await authService.GetCurrentUser();
             venue.UserId = user.Id;
 
             venueRepository.Add(venue);
@@ -44,7 +44,7 @@ namespace Infrastructure.Services
 
         public async Task<Venue?> GetUserVenueAsync()
         {
-            var user = authService.GetCurrentUser();
+            var user = await authService.GetCurrentUser();
             return await venueRepository.GetByUserIdAsync(user.Id);
 
         }

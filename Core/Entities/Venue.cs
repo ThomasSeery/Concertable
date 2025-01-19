@@ -16,7 +16,6 @@ namespace Core.Entities
         public string Town { get; set; }
         public bool Approved { get; set; }
         public ApplicationUser User { get; set; }
-
         public ICollection<Listing> Listings { get; set; }
         public ICollection<VenueImage> Images { get; }
 

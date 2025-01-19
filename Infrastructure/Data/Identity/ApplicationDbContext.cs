@@ -34,30 +34,6 @@ namespace Infrastructure.Data.Identity
         {
             base.OnModelCreating(modelBuilder);
 
-            //Add ApplicationUser Forein Keys
-            /*
-             * Where the names between the ids and objects do not coinside
-             * e.g. FromId (should be FromUserId to match) and FromUser, we need to
-             * explicitly reference these here so .NET knows the relationship between them
-             */
-            //modelBuilder.Entity<Venue>()
-            //    .HasOne<VenueManager>()
-            //    .WithOne(e => e.Venue)  // Establish the one to one relationship between user and venue
-            //    .HasForeignKey<Venue>(e => e.UserId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-            //modelBuilder.Entity<Ticket>()
-            //    .HasOne<Customer>()
-            //    .WithMany(e => e.Tickets)
-            //    .HasForeignKey(e => e.UserId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-            //modelBuilder.Entity<Artist>()
-            //   .HasOne<ArtistManager>()
-            //   .WithOne(e => e.Artist)
-            //   .HasForeignKey<Artist>(e => e.UserId)
-            //   .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Message>()
                 .HasOne<Manager>()
                 .WithMany(e => e.SentMessages)

@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<Listing>> GetActiveListingsByVenueIdAsync(int id)
         {
-            return await listingRepository.GetActiveByVenueId(id);
+            return await listingRepository.GetActiveByVenueIdAsync(id);
         }
     }
 }

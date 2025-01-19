@@ -26,7 +26,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Listing>> CreateListing([FromBody] ListingDto listingDto)
+        public async Task<ActionResult> CreateListing([FromBody] ListingDto listingDto)
         {
             var listing = new Listing()
             {
@@ -37,12 +37,5 @@ namespace Web.Controllers
             listingService.CreateListing(listing);
             return CreatedAtAction("", new {Id = 1});
         }
-
-        //[HttpGet("active-listings/venue/{id}")]
-        //public async Task<ActionResult<IEnumerable<Venue>>> GetActiveListingsByVenueId([FromQuery] VenueParams venueParams)
-        //{
-        //    var venues = await listingService.GetVenueHeadersAsync(venueParams);
-        //    return Ok(venues);
-        //}
     }
 }
