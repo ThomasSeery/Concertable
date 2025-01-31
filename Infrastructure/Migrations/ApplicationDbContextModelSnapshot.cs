@@ -79,15 +79,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ArtistId")
+                    b.Property<int>("AvailableTickets")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ListingId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -96,11 +93,16 @@ namespace Infrastructure.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("RegisterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalTickets")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ArtistId");
-
-                    b.HasIndex("ListingId");
+                    b.HasIndex("RegisterId")
+                        .IsUnique();
 
                     b.ToTable("Events");
                 });
@@ -372,18 +374,26 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Register", b =>
                 {
-                    b.Property<int>("ListingId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
 
-                    b.HasKey("ListingId", "ArtistId");
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("ListingId");
 
                     b.ToTable("Registers");
                 });
@@ -449,9 +459,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EventId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
@@ -461,8 +468,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("EventId1");
 
                     b.HasIndex("UserId");
 
@@ -702,21 +707,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Event", b =>
                 {
-                    b.HasOne("Core.Entities.Artist", "Artist")
-                        .WithMany("Events")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Entities.Listing", "Listing")
-                        .WithMany()
-                        .HasForeignKey("ListingId")
+                    b.HasOne("Core.Entities.Register", "Register")
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Event", "RegisterId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Artist");
-
-                    b.Navigation("Listing");
+                    b.Navigation("Register");
                 });
 
             modelBuilder.Entity("Core.Entities.EventGenre", b =>
@@ -819,7 +816,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Core.Entities.Listing", "Listing")
-                        .WithMany()
+                        .WithMany("Registers")
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -854,14 +851,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Ticket", b =>
                 {
                     b.HasOne("Core.Entities.Event", "Event")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("Core.Entities.Event", null)
-                        .WithMany("SoldTickets")
-                        .HasForeignKey("EventId1");
 
                     b.HasOne("Core.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
@@ -962,8 +955,6 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("ArtistGenres");
 
-                    b.Navigation("Events");
-
                     b.Navigation("Registers");
 
                     b.Navigation("SocialMedias");
@@ -977,7 +968,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Images");
 
-                    b.Navigation("SoldTickets");
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Core.Entities.Genre", b =>
@@ -988,6 +979,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Listing", b =>
                 {
                     b.Navigation("ListingGenres");
+
+                    b.Navigation("Registers");
                 });
 
             modelBuilder.Entity("Core.Entities.Ticket", b =>

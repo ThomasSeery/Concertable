@@ -16,11 +16,14 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Event>> GetUpcomingByVenueIdAsync(int id)
         {
-            var query = from events in context.Events
-                        join listings in context.Listings on events.ListingId equals listings.Id
+            var query = (from events in context.Events
+                        join registers in context.Registers on events.RegisterId equals registers.Id
+                        join listings in context.Listings on registers.ListingId equals listings.Id
                         join venues in context.Venues on listings.VenueId equals venues.Id
                         where venues.Id == id && listings.StartDate >= DateTime.Today
-                        select events;
+                        select events)
+                        .Include(e => e.Register)
+                        .ThenInclude(r => r.Listing);
 
             return await query.ToListAsync();
         }

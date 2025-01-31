@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    [PrimaryKey(nameof(ListingId), nameof(ArtistId))]
-    public  class Register
+    public  class Register : BaseEntity
     {
         public int ListingId { get; set; }
         public int ArtistId { get; set; }

@@ -36,6 +36,7 @@ namespace Infrastructure.Repositories
         {
             var query = context.Venues.AsQueryable();
             query = query.Where(v => v.UserId == id);
+                
 
             return await query.FirstOrDefaultAsync();
         }

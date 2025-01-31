@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.IncludeFields = true;
+    options.JsonSerializerOptions.IncludeFields = true; //Include nested fields 
+
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; //Ignore cycles
+    options.JsonSerializerOptions.WriteIndented = true; //JSON formatting
 });
 builder.Services.AddHttpContextAccessor();
 
@@ -53,7 +57,9 @@ builder.Services.AddAuthentication();
 builder.Services.ConfigureApplicationCookie(config =>
 {
     config.Cookie.Name = "Identity.Cookie";
-
+    config.Cookie.SameSite = SameSiteMode.None;
+    config.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    config.ExpireTimeSpan = TimeSpan.FromDays(7);
     config.Events.OnRedirectToAccessDenied = context =>
     {
         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -90,6 +96,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+System.Diagnostics.Debug.WriteLine("hello");
 // Initialize the Database
 try
 {
@@ -97,9 +104,8 @@ try
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-    await context.Database.MigrateAsync(); //Creates db if not created yet
 
-    await ApplicationDbInitializer.SeedAsync(context, userManager);
+    await ApplicationDbInitializer.InitializeAsync(context, userManager);
 
 }
 catch(Exception)

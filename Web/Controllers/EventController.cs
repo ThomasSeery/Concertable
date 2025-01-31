@@ -5,6 +5,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.Design;
+using Web.DTOs;
 
 namespace Web.Controllers
 {
@@ -20,10 +21,22 @@ namespace Web.Controllers
         }
 
         [HttpGet("venue/{id}")]
-        public async Task<ActionResult<IEnumerable<Venue>>> GetUpcomingEventsByVenueId(int id)
+        public async Task<ActionResult<IEnumerable<EventDto>>> GetUpcomingEventsByVenueId(int id)
         {
-            var venueEvents = await eventService.GetUpcomingEventsByVenueIdAsync(id);
-            return Ok(venueEvents);
+            var events = await eventService.GetUpcomingEventsByVenueIdAsync(id);
+            var eventDtos = events.Select(e => new EventDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                About = e.About,
+                Price = e.Price,
+                ImageUrl = e.ImageUrl,
+                StartDate = e.Register.Listing.StartDate,
+                EndDate = e.Register.Listing.EndDate,
+                TotalTickets = e.TotalTickets,
+                AvailableTickets = e.AvailableTickets,
+            }).ToList();
+            return Ok(eventDtos);
         }
 
     }

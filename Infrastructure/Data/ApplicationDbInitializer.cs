@@ -2,6 +2,8 @@
 using Core.Entities.Identity;
 using Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,11 @@ namespace Infrastructure.Data
 {
     public class ApplicationDbInitializer
     {
-        public static async Task SeedAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public static async Task InitializeAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            context.Database.EnsureCreated();
+            await context.Database.MigrateAsync(); //Creates db if not created yet
+
+            System.Diagnostics.Debug.WriteLine("test");
 
             //Users
             if (!context.Users.Any())
@@ -58,6 +62,35 @@ namespace Infrastructure.Data
                 await userManager.AddToRoleAsync(users[3], "VenueManager");
                 await userManager.AddToRoleAsync(users[4], "Customer");
             }
+            //Genres
+            if (!context.Genres.Any())
+            {
+                var genres = new Genre[]
+                {
+                    new Genre
+                    {
+                        Name = "Rock",
+                    },
+                    new Genre
+                    {
+                        Name = "Pop",
+                    },
+                    new Genre
+                    {
+                        Name = "Indie",
+                    },
+                    new Genre
+                    {
+                        Name = "Alternative",
+                    },
+                    new Genre
+                    {
+                        Name = "Electric",
+                    }
+                };
+                context.Genres.AddRange(genres);
+                await context.SaveChangesAsync();
+            }
             //Artists
             if (!context.Artists.Any())
             {
@@ -72,6 +105,25 @@ namespace Infrastructure.Data
                     },
                 };
                 context.Artists.AddRange(artists);
+                await context.SaveChangesAsync();
+            }
+            //ArtistGenres
+            if(!context.ArtistGenres.Any())
+            {
+                var artistGenres = new ArtistGenre[]
+                {
+                    new ArtistGenre
+                    {
+                        ArtistId = 1,
+                        GenreId = 1,
+                    },
+                    new ArtistGenre
+                    {
+                        ArtistId = 1,
+                        GenreId = 2,
+                    }
+                };
+                context.ArtistGenres.AddRange(artistGenres);
                 await context.SaveChangesAsync();
             }
             //Venue
@@ -100,27 +152,85 @@ namespace Infrastructure.Data
                     new Listing
                     {
                         VenueId = 1,
-                        StartDate = DateTime.Now,
-                        EndDate = DateTime.Now,
+                        StartDate = new DateTime(2024, 1, 23, 18, 00, 0),
+                        EndDate = new DateTime(2024, 1, 23, 20, 00, 0),
+                        Pay = 250
+                    },
+                    new Listing
+                    {
+                        VenueId = 1,
+                        StartDate = new DateTime(2025, 2, 8, 20, 30, 0),
+                        EndDate = new DateTime(2025, 2, 8, 20, 30, 0),
                         Pay = 100
 
                     },
                     new Listing
                     {
                         VenueId = 1,
-                        StartDate = new DateTime(2024, 1, 12, 20, 30, 0),
-                        EndDate = new DateTime(2024, 1, 12, 23, 30, 0),
+                        StartDate = new DateTime(2025, 2, 20, 20, 30, 0),
+                        EndDate = new DateTime(2025, 2, 20, 23, 30, 0),
                         Pay = 300
-                    },
-                    new Listing
-                    {
-                        VenueId = 1,
-                        StartDate = new DateTime(2024, 1, 23, 18, 00, 0),
-                        EndDate = new DateTime(2024, 1, 23, 20, 00, 0),
-                        Pay = 250
                     },
                 };
                 context.Listings.AddRange(listings);
+                await context.SaveChangesAsync();
+            }
+            //ListingGenres
+            if(!context.ListingGenres.Any())
+            {
+                var listingGenres = new ListingGenre[]
+                {
+                    new ListingGenre
+                    {
+                        ListingId = 1,
+                        GenreId = 1,
+                    },
+                    new ListingGenre
+                    {
+                        ListingId = 1,
+                        GenreId = 3,
+                    },
+                    new ListingGenre
+                    {
+                        ListingId = 2,
+                        GenreId = 2,
+                    },
+                    new ListingGenre
+                    {
+                        ListingId = 2,
+                        GenreId = 3,
+                    },
+                    new ListingGenre
+                    {
+                        ListingId = 3,
+                        GenreId = 1,
+                    },
+                    new ListingGenre
+                    {
+                        ListingId = 3,
+                        GenreId = 3,
+                    },
+                };
+                context.ListingGenres.AddRange(listingGenres);
+                await context.SaveChangesAsync();
+            }
+            //Registers
+            if(!context.Registers.Any())
+            {
+                var registers = new Register[]
+                {
+                    new Register
+                    {
+                        ArtistId = 1,
+                        ListingId = 1
+                    },
+                    new Register
+                    {
+                        ArtistId = 1,
+                        ListingId = 2
+                    }
+                };
+                context.Registers.AddRange(registers);
                 await context.SaveChangesAsync();
             }
             //Events
@@ -130,11 +240,22 @@ namespace Infrastructure.Data
                 {
                     new Event
                     {
-                        ListingId = 2,
-                        ArtistId = 1,
+                        RegisterId = 1,
                         Price = 10.5,
                         Name = "Test Event",
                         About = "A Test Event",
+                        TotalTickets = 100,
+                        AvailableTickets = 50,
+                        ImageUrl = ""
+                    },
+                    new Event
+                    {
+                        RegisterId = 2,
+                        Price = 10.5,
+                        Name = "Test Event",
+                        About = "A Test Event",
+                        TotalTickets = 100,
+                        AvailableTickets = 50,
                         ImageUrl = ""
                     },
                 };

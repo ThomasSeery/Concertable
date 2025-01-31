@@ -19,10 +19,18 @@ namespace Web.Controllers
         }
 
         [HttpGet("active/venue/{id}")]
-        public async Task<ActionResult<IEnumerable<Listing>>> GetActiveListingsByVenueId(int id)
+        public async Task<ActionResult<IEnumerable<ListingDto>>> GetActiveListingsByVenueId(int id)
         {
             var listings = await listingService.GetActiveListingsByVenueIdAsync(id);
-            return Ok(listings);
+            var listingDtos = listings.Select(l => new ListingDto
+            {
+                Id = l.Id,
+                StartDate = l.StartDate,
+                EndDate = l.EndDate,
+                Pay = l.Pay,
+                Genres = l.ListingGenres.Select(g => g.Genre.Name).ToList()
+            });
+            return Ok(listingDtos);
         }
 
         [HttpPost]

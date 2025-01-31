@@ -360,35 +360,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ListingId = table.Column<int>(type: "int", nullable: false),
-                    ArtistId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    About = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_Artists_ArtistId",
-                        column: x => x.ArtistId,
-                        principalTable: "Artists",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Events_Listings_ListingId",
-                        column: x => x.ListingId,
-                        principalTable: "Listings",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ListingGenres",
                 columns: table => new
                 {
@@ -416,13 +387,15 @@ namespace Infrastructure.Migrations
                 name: "Registers",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ListingId = table.Column<int>(type: "int", nullable: false),
                     ArtistId = table.Column<int>(type: "int", nullable: false),
                     Approved = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Registers", x => new { x.ListingId, x.ArtistId });
+                    table.PrimaryKey("PK_Registers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Registers_Artists_ArtistId",
                         column: x => x.ArtistId,
@@ -433,6 +406,30 @@ namespace Infrastructure.Migrations
                         name: "FK_Registers_Listings_ListingId",
                         column: x => x.ListingId,
                         principalTable: "Listings",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RegisterId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    About = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    TotalTickets = table.Column<int>(type: "int", nullable: false),
+                    AvailableTickets = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Registers_RegisterId",
+                        column: x => x.RegisterId,
+                        principalTable: "Registers",
                         principalColumn: "Id");
                 });
 
@@ -489,8 +486,7 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventId1 = table.Column<int>(type: "int", nullable: true)
+                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -504,11 +500,6 @@ namespace Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Tickets_Events_EventId",
                         column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Tickets_Events_EventId1",
-                        column: x => x.EventId1,
                         principalTable: "Events",
                         principalColumn: "Id");
                 });
@@ -605,14 +596,10 @@ namespace Infrastructure.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_ArtistId",
+                name: "IX_Events_RegisterId",
                 table: "Events",
-                column: "ArtistId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Events_ListingId",
-                table: "Events",
-                column: "ListingId");
+                column: "RegisterId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ListingGenres_GenreId",
@@ -640,6 +627,11 @@ namespace Infrastructure.Migrations
                 column: "ArtistId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Registers_ListingId",
+                table: "Registers",
+                column: "ListingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_TicketId",
                 table: "Reviews",
                 column: "TicketId",
@@ -654,11 +646,6 @@ namespace Infrastructure.Migrations
                 name: "IX_Tickets_EventId",
                 table: "Tickets",
                 column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tickets_EventId1",
-                table: "Tickets",
-                column: "EventId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_UserId",
@@ -715,9 +702,6 @@ namespace Infrastructure.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Registers");
-
-            migrationBuilder.DropTable(
                 name: "Reviews");
 
             migrationBuilder.DropTable(
@@ -740,6 +724,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Registers");
 
             migrationBuilder.DropTable(
                 name: "Artists");

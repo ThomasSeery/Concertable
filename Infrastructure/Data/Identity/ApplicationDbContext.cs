@@ -60,22 +60,37 @@ namespace Infrastructure.Data.Identity
 
             //Temporary Fix
             modelBuilder.Entity<Event>()
-                .HasOne(e => e.Listing)
-                .WithMany()
-                .HasForeignKey(e => e.ListingId)
+                .HasOne(e => e.Register)
+                .WithOne()
+                .HasForeignKey<Event>(e => e.RegisterId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Register>()
-                .HasOne(e => e.Listing)
-                .WithMany()
-                .HasForeignKey(e => e.ListingId)
+                .HasOne(r => r.Listing)
+                .WithMany(l => l.Registers)  
+                .HasForeignKey(r => r.ListingId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction); 
+
+            // One-to-Many: An Artist can have multiple Registers
+            modelBuilder.Entity<Register>()
+                .HasOne(r => r.Artist)
+                .WithMany(a => a.Registers)  
+                .HasForeignKey(r => r.ArtistId)
+                .IsRequired();
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.Event)
+                .WithMany(e => e.Tickets) 
+                .HasForeignKey(t => t.EventId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Ticket>()
-                .HasOne(e => e.Event)
-                .WithMany()
-                .HasForeignKey(e => e.EventId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(t => t.User)
+                .WithMany() // ✅ No explicit Tickets collection in User
+                .HasForeignKey(t => t.UserId)
+                .IsRequired();
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
         
