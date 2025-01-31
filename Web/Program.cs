@@ -60,6 +60,7 @@ builder.Services.ConfigureApplicationCookie(config =>
     config.Cookie.SameSite = SameSiteMode.None;
     config.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     config.ExpireTimeSpan = TimeSpan.FromDays(7);
+    //Prevent automatic url redirect on http errors and replaces with the actual error
     config.Events.OnRedirectToAccessDenied = context =>
     {
         context.Response.StatusCode = StatusCodes.Status403Forbidden;
