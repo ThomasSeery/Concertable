@@ -91,6 +91,7 @@ app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
 
 app.UseExceptionHandler();
 
+//Development use
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
