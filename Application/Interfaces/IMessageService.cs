@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs
+namespace Application.Interfaces
 {
-    public class ArtistDto
+    public interface IMessageService
     {
-        public int Id { get; set; }
-
     }
 }
