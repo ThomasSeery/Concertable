@@ -1,7 +1,6 @@
 ﻿using Application.DTOs;
-using Core.Entities;
-using Core.Parameters;
 using Application.Responses;
+using Core.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IArtistRepository : IHeaderRepository<Artist, ArtistHeaderDto>
+    public interface IHeaderService<TDto> where TDto : HeaderDto
     {
-        Task<Artist?> GetByUserIdAsync(int id);
+        Task<PaginationResponse<TDto>> GetHeadersAsync(SearchParams searchParams);
     }
 }
