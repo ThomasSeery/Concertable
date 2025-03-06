@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class PreferenceDto
+    public class CreatePreferenceDto
     {
-        public int Id { get; set; }
-        public UserDto User { get; set; }
         public int RadiusKm { get; set; }
         public IEnumerable<GenreDto> Genres { get; set; }
     }
