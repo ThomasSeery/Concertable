@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class MessageDto
+    public class ActionDto
     {
+        public string Name { get; set; }
         public int Id { get; set; }
-        public UserDto FromUser { get; set; }
-        public ActionDto? Action { get; set; }
-        public string Content { get; set; }
     }
 }
