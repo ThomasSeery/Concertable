@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EventCheckoutComponent } from './event-checkout.component';
+import { ResetPasswordComponent } from './reset-password.component';
 
-describe('TicketCheckoutComponent', () => {
-  let component: EventCheckoutComponent;
-  let fixture: ComponentFixture<EventCheckoutComponent>;
+describe('ResetPasswordComponent', () => {
+  let component: ResetPasswordComponent;
+  let fixture: ComponentFixture<ResetPasswordComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EventCheckoutComponent]
+      declarations: [ResetPasswordComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EventCheckoutComponent);
+    fixture = TestBed.createComponent(ResetPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
