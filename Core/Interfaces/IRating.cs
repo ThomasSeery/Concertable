@@ -1,5 +1,4 @@
-﻿using NetTopologySuite.Geometries;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface ILocation
+    public interface IRating
     {
-        Point? Location { get; }
+        public double? Rating { get; set; }
     }
 }
