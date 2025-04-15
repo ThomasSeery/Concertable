@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Core.Interfaces;
+using Application.Responses;
 using Core.Parameters;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface ILocationService
+    public interface ITransactionService
     {
-        bool IsWithinRadius(double? lat1, double? lon1, double? lat2, double? lon2, int radiusKm);
+        Task LogAsync(TransactionDto purchaseDto);
+        Task<PaginationResponse<TransactionDto>> GetAsync(PaginationParams pageParams);
     }
 }
-
