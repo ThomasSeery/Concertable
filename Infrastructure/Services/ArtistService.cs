@@ -15,19 +15,22 @@ public class ArtistService : IArtistService
     private readonly IReviewService reviewService;
     private readonly ICurrentUser currentUser;
     private readonly IUnitOfWork unitOfWork;
+    private readonly IGenreSyncService genreSyncService;
 
     public ArtistService(
         IArtistRepository artistRepository,
         IImageService imageService,
         ICurrentUser currentUser,
         IReviewService reviewService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IGenreSyncService genreSyncService)
     {
         this.artistRepository = artistRepository;
         this.imageService = imageService;
         this.reviewService = reviewService;
         this.currentUser = currentUser;
         this.unitOfWork = unitOfWork;
+        this.genreSyncService = genreSyncService;
     }
 
     public async Task<ArtistDto?> GetDetailsForCurrentUserAsync()
@@ -69,22 +72,12 @@ public class ArtistService : IArtistService
         artist.About = request.About;
         artist.ImageUrl = request.ImageUrl;
 
-        var existingGenreIds = artist.ArtistGenres.Select(ag => ag.GenreId).ToList();
-        var newGenreIds = request.Genres.Select(g => g.Id).ToList();
-
-        foreach (var genreId in existingGenreIds.Except(newGenreIds).ToList())
-        {
-            var toRemove = artist.ArtistGenres.FirstOrDefault(ag => ag.GenreId == genreId);
-            if (toRemove != null)
-                artist.ArtistGenres.Remove(toRemove);
-        }
-
-        foreach (var genreId in newGenreIds.Except(existingGenreIds).ToList())
-            artist.ArtistGenres.Add(new ArtistGenre { ArtistId = artist.Id, GenreId = genreId });
+        genreSyncService.Sync<ArtistGenre>(artist.ArtistGenres, request.Genres.Select(g => g.Id));
 
         if (request.Image is not null)
             artist.ImageUrl = await imageService.ReplaceAsync(request.Image, artist.ImageUrl);
 
+        artistRepository.Update(artist);
         await artistRepository.SaveChangesAsync();
 
         return artist.ToDto();

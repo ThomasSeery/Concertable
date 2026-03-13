@@ -101,6 +101,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IOwnershipService, OwnershipService>();
         services.AddScoped<IConcertValidationService, ConcertValidationService>();
+        services.AddSingleton<ICollectionDiffer, CollectionDiffer>();
+        services.AddScoped<IGenreSyncService, GenreSyncService>();
 
         return services;
     }

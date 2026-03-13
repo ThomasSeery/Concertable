@@ -1,9 +1,10 @@
+using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Entities;
 
 [PrimaryKey(nameof(ArtistId), nameof(GenreId))]
-public class ArtistGenre
+public class ArtistGenre : IGenreJoin
 {
     public int ArtistId { get; set; }
     public int GenreId { get; set; }
