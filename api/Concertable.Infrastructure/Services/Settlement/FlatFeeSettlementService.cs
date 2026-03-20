@@ -8,7 +8,7 @@ using Core.Exceptions;
 
 namespace Infrastructure.Services.Settlement;
 
-public class VenueHireSettlementService : ISettlementStrategy
+public class FlatFeeSettlementService : ISettlementStrategy
 {
     private readonly IContractRepository contractRepository;
     private readonly IVenueManagerRepository venueManagerRepository;
@@ -18,7 +18,7 @@ public class VenueHireSettlementService : ISettlementStrategy
     private readonly IConcertApplicationRepository applicationRepository;
     private readonly IConcertRepository concertRepository;
 
-    public VenueHireSettlementService(
+    public FlatFeeSettlementService(
         IContractRepository contractRepository,
         IVenueManagerRepository venueManagerRepository,
         IArtistManagerRepository artistManagerRepository,
@@ -41,30 +41,30 @@ public class VenueHireSettlementService : ISettlementStrategy
         var concert = await concertRepository.GetByIdAsync(concertId)
             ?? throw new NotFoundException("Concert not found");
 
-        var contract = await contractRepository.GetByConcertIdAsync<VenueHireContractEntity>(concertId)
-            ?? throw new NotFoundException("VenueHire contract not found for this concert");
-
-        var artistManager = await artistManagerRepository.GetByConcertIdAsync(concertId)
-            ?? throw new NotFoundException("Artist manager not found for this concert");
+        var contract = await contractRepository.GetByConcertIdAsync<FlatFeeContractEntity>(concertId)
+            ?? throw new NotFoundException("FlatFee contract not found for this concert");
 
         var venueManager = await venueManagerRepository.GetByConcertIdAsync(concertId)
             ?? throw new NotFoundException("Venue manager not found for this concert");
 
-        var paymentMethodId = await stripeAccountService.GetPaymentMethodAsync(artistManager.StripeId!);
+        var artistManager = await artistManagerRepository.GetByConcertIdAsync(concertId)
+            ?? throw new NotFoundException("Artist manager not found for this concert");
+
+        var paymentMethodId = await stripeAccountService.GetPaymentMethodAsync(venueManager.StripeId!);
 
         await paymentService.ProcessAsync(new TransactionRequest
         {
             PaymentMethodId = paymentMethodId,
-            FromUserEmail = artistManager.Email!,
-            Amount = contract.HireFee,
-            DestinationStripeId = venueManager.StripeId,
+            FromUserEmail = venueManager.Email!,
+            Amount = contract.Fee,
+            DestinationStripeId = artistManager.StripeId,
             Metadata = new Dictionary<string, string>
             {
-                { "fromUserId", artistManager.Id.ToString() },
-                { "toUserId", venueManager.Id.ToString() },
+                { "fromUserId", venueManager.Id.ToString() },
+                { "toUserId", artistManager.Id.ToString() },
                 { "type", "settlement" },
                 { "concertId", concertId.ToString() },
-                { "contractType", "VenueHire" }
+                { "contractType", "FlatFee" }
             }
         });
 
