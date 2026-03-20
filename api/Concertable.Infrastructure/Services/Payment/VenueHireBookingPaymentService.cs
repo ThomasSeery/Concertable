@@ -3,46 +3,54 @@ using Application.Interfaces.Concert;
 using Application.Interfaces.Payment;
 using Application.Requests;
 using Application.Responses;
+using Concertable.Core.Entities.Contracts;
 using Core.Exceptions;
 
 namespace Infrastructure.Services.Payment;
 
-public class VenueTicketPaymentService : ITicketPaymentStrategy
+public class VenueHireBookingPaymentService : IBookingPaymentStrategy
 {
     private readonly IPaymentService paymentService;
     private readonly ICurrentUser currentUser;
     private readonly IVenueManagerRepository venueManagerRepository;
+    private readonly IContractRepository contractRepository;
 
-    public VenueTicketPaymentService(
+    public VenueHireBookingPaymentService(
         IPaymentService paymentService,
         ICurrentUser currentUser,
-        IVenueManagerRepository venueManagerRepository)
+        IVenueManagerRepository venueManagerRepository,
+        IContractRepository contractRepository)
     {
         this.paymentService = paymentService;
         this.currentUser = currentUser;
         this.venueManagerRepository = venueManagerRepository;
+        this.contractRepository = contractRepository;
     }
 
-    public async Task<PaymentResponse> PayAsync(int concertId, int quantity, string paymentMethodId, decimal price)
+    public async Task<PaymentResponse> PayAsync(int applicationId, string paymentMethodId)
     {
         var user = currentUser.Get();
-        var recipient = await venueManagerRepository.GetByConcertIdAsync(concertId)
-            ?? throw new NotFoundException("Venue manager not found for this concert");
+
+        var contract = await contractRepository.GetByApplicationIdAsync(applicationId) as VenueHireContractEntity
+            ?? throw new NotFoundException("VenueHire contract not found for this application");
+
+        var recipient = await venueManagerRepository.GetByApplicationIdAsync(applicationId)
+            ?? throw new NotFoundException("Venue manager not found for this application");
 
         return await paymentService.ProcessAsync(new TransactionRequest
         {
             PaymentMethodId = paymentMethodId,
             FromUserEmail = user.Email,
-            Amount = price * quantity,
+            Amount = contract.HireFee,
             DestinationStripeId = recipient.StripeId,
             Metadata = new Dictionary<string, string>
             {
                 { "fromUserId", user.Id.ToString() },
                 { "fromUserEmail", user.Email },
                 { "toUserId", recipient.Id.ToString() },
-                { "type", "concert" },
-                { "concertId", concertId.ToString() },
-                { "quantity", quantity.ToString() }
+                { "type", "booking" },
+                { "applicationId", applicationId.ToString() },
+                { "contractType", "VenueHire" }
             }
         });
     }
