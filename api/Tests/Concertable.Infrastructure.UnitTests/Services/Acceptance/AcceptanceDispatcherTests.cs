@@ -1,35 +1,35 @@
 using Concertable.Concert.Application.Interfaces;
-using Concertable.Concert.Infrastructure.Services.Settlement;
+using Concertable.Concert.Infrastructure.Services.Acceptance;
 using Concertable.Contract.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Concertable.Infrastructure.UnitTests.Services.Settlement;
+namespace Concertable.Infrastructure.UnitTests.Services.Acceptance;
 
-public class SettlementDispatcherTests
+public class AcceptanceDispatcherTests
 {
     private readonly Mock<IContractLookup> contractLookup;
     private readonly Mock<IConcertWorkflowStrategyFactory> strategyFactory;
-    private readonly SettlementDispatcher sut;
+    private readonly AcceptanceDispatcher sut;
 
-    public SettlementDispatcherTests()
+    public AcceptanceDispatcherTests()
     {
         contractLookup = new Mock<IContractLookup>();
         strategyFactory = new Mock<IConcertWorkflowStrategyFactory>();
-        sut = new SettlementDispatcher(contractLookup.Object, strategyFactory.Object);
+        sut = new AcceptanceDispatcher(contractLookup.Object, strategyFactory.Object);
     }
 
     [Fact]
-    public async Task SettleAsync_ShouldResolveContractAndDelegate()
+    public async Task AcceptAsync_ShouldResolveContractAndDelegate()
     {
         var contract = new FlatFeeContract { Id = 99, Fee = 500, PaymentMethod = PaymentMethod.Cash };
         var strategy = new Mock<IConcertWorkflowStrategy>();
 
-        contractLookup.Setup(l => l.GetByBookingIdAsync(1)).ReturnsAsync(contract);
+        contractLookup.Setup(l => l.GetByApplicationIdAsync(1)).ReturnsAsync(contract);
         strategyFactory.Setup(f => f.Create(ContractType.FlatFee)).Returns(strategy.Object);
 
-        await sut.SettleAsync(1);
+        await sut.AcceptAsync(1);
 
-        strategy.Verify(s => s.SettleAsync(1), Times.Once);
+        strategy.Verify(s => s.InitiateAsync(1, null), Times.Once);
     }
 }
