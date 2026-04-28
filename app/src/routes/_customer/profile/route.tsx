@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
-import { requireAuth } from "@/lib/guards";
+import { requireRole } from "@/lib/guards";
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +14,14 @@ import {
 } from "@/components/ui/sidebar";
 
 const links = [
-  { label: "Settings", to: "/settings" },
-  { label: "Payment / Billing", to: "/settings/payment" },
+  { label: "Profile", to: "/profile" },
+  { label: "Location", to: "/profile/location" },
+  { label: "Preferences", to: "/profile/preferences" },
+  { label: "Upcoming Tickets", to: "/profile/tickets/upcoming" },
+  { label: "Ticket History", to: "/profile/tickets/history" },
 ];
 
-function SettingsLayout() {
+function ProfileLayout() {
   return (
     <SidebarProvider
       style={{ "--sidebar-width": "220px" } as React.CSSProperties}
@@ -27,7 +30,7 @@ function SettingsLayout() {
       <Sidebar collapsible="none" className="bg-muted min-h-screen">
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Settings</SidebarGroupLabel>
+            <SidebarGroupLabel>Profile</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {links.map(({ label, to }) => (
@@ -35,7 +38,7 @@ function SettingsLayout() {
                     <SidebarMenuButton asChild>
                       <Link
                         to={to}
-                        activeOptions={{ exact: to === "/settings" }}
+                        activeOptions={{ exact: to === "/profile" }}
                         activeProps={{
                           "data-active": true,
                           className:
@@ -62,7 +65,7 @@ function SettingsLayout() {
   );
 }
 
-export const Route = createFileRoute("/_customer/settings")({
-  beforeLoad: ({ location }) => requireAuth({ location }),
-  component: SettingsLayout,
+export const Route = createFileRoute("/_customer/profile")({
+  beforeLoad: ({ location }) => requireRole("Customer", { location }),
+  component: ProfileLayout,
 });
