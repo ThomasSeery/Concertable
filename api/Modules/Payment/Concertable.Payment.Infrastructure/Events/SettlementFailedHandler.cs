@@ -3,26 +3,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Concertable.Payment.Infrastructure.Events;
 
-internal class SettlementTransactionHandler : ITransactionHandler
+internal class SettlementFailedHandler : IPaymentFailureHandler
 {
     private readonly ITransactionRepository transactionRepository;
-    private readonly ILogger<SettlementTransactionHandler> logger;
+    private readonly ILogger<SettlementFailedHandler> logger;
 
-    public SettlementTransactionHandler(
+    public SettlementFailedHandler(
         ITransactionRepository transactionRepository,
-        ILogger<SettlementTransactionHandler> logger)
+        ILogger<SettlementFailedHandler> logger)
     {
         this.transactionRepository = transactionRepository;
         this.logger = logger;
     }
 
-    public async Task HandleAsync(PaymentSucceededEvent @event, CancellationToken ct)
+    public async Task HandleAsync(PaymentFailedEvent @event, CancellationToken ct)
     {
         var transaction = await transactionRepository.GetByPaymentIntentIdAsync(@event.TransactionId);
         if (transaction is null)
         {
             logger.LogWarning(
-                "No settlement transaction found for charge {ChargeId}; ignoring PaymentSucceededEvent",
+                "No settlement transaction found for charge {ChargeId}; ignoring PaymentFailedEvent",
                 @event.TransactionId);
             return;
         }
@@ -30,16 +30,16 @@ internal class SettlementTransactionHandler : ITransactionHandler
         if (transaction.Status != TransactionStatus.Pending)
         {
             logger.LogInformation(
-                "Settlement transaction {TransactionId} already in status {Status}; skipping complete",
+                "Settlement transaction {TransactionId} already in status {Status}; skipping fail",
                 transaction.Id, transaction.Status);
             return;
         }
 
-        transaction.Complete();
+        transaction.Fail();
         await transactionRepository.SaveChangesAsync();
 
         logger.LogInformation(
-            "Settlement transaction {TransactionId} completed (Pending -> Complete) for charge {ChargeId}",
-            transaction.Id, transaction.PaymentIntentId);
+            "Settlement transaction {TransactionId} failed (Pending -> Failed) for charge {ChargeId}: {Code} {Message}",
+            transaction.Id, transaction.PaymentIntentId, @event.FailureCode, @event.FailureMessage);
     }
 }
