@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Appium.WebDriver" Version="5.2.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.59.0" />
     <PackageReference Include="Reqnroll.xUnit" Version="3.3.4" />
     <PackageReference Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="3.3.4" />
     <PackageReference Include="xunit" Version="2.9.3" />
@@ -27,6 +27,7 @@
     <Content Include="..\..\..\Concertable.Web\appsettings.E2E.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="reqnroll.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="TestAssets\concertable-debug.apk" CopyToOutputDirectory="PreserveNewest" Condition="Exists('TestAssets\concertable-debug.apk')" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +35,9 @@
     <Using Include="Concertable.E2ETests" />
     <Using Include="Concertable.Tests.Common" />
     <Using Include="Concertable.User.Contracts" />
-    <Using Include="Microsoft.Playwright" />
+    <Using Include="OpenQA.Selenium" />
+    <Using Include="OpenQA.Selenium.Appium" />
+    <Using Include="OpenQA.Selenium.Appium.Android" />
     <Using Include="Reqnroll" />
   </ItemGroup>
 
