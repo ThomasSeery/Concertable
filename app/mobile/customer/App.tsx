@@ -1,4 +1,4 @@
-import "./shared/global.css";
+import "../shared/global.css";
 import {
   useFonts,
   Geist_400Regular,
@@ -8,7 +8,7 @@ import {
 } from "@expo-google-fonts/geist";
 import { PortalHost } from "@rn-primitives/portal";
 import { AppProviders } from "shared/providers/AppProviders";
-import { RootNavigator } from "shared/navigation/RootNavigator";
+import { RootNavigator } from "./src/navigation/RootNavigator";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
